@@ -1,5 +1,6 @@
 package com.library.librarymanagement.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.library.librarymanagement.Dto.BookDetail;
 import com.library.librarymanagement.model.Book;
+import com.library.librarymanagement.model.Borrower;
 import com.library.librarymanagement.model.User;
 import com.library.librarymanagement.repo.BookRepo;
 import com.library.librarymanagement.service.BookService;
+import com.library.librarymanagement.service.BorrowerService;
 import com.library.librarymanagement.service.UserService;
 
 @RestController
@@ -24,10 +28,14 @@ public class BookController {
 	
 	public final BookService bookService;
 	public final UserService userService;
+	public final BorrowerService borrowerService;
 	
-	public BookController(BookService bookService,UserService userService) {
+	
+	public BookController(BookService bookService,UserService userService,BorrowerService borrowerService) {
 		this.bookService=bookService;
 		this.userService=userService;
+		this.borrowerService=borrowerService;
+		
 	}
 
 	@PostMapping("/add")
@@ -57,5 +65,20 @@ public class BookController {
 		//System.out.println("inside /add");
 		User newuser = userService.addUser(user);
 		return new ResponseEntity<>(newuser,HttpStatus.OK);	
+	}
+	
+	@PostMapping("/addBorrower")
+	public ResponseEntity<Borrower> addBorrower(@RequestBody Borrower borrower)
+	{
+		//System.out.println("inside /add");
+		Borrower newBorrower = borrowerService.addBorrower(borrower);
+		return new ResponseEntity<>(newBorrower,HttpStatus.OK);	
+	}
+	
+	@GetMapping("/bookDetails/{id}")
+	public ResponseEntity<List<BookDetail>> viewDetails(@PathVariable("id") long id)
+	{
+		List<BookDetail> issueBook = borrowerService.viewDetail(id);
+		return new ResponseEntity<>(issueBook,HttpStatus.OK);	
 	}
 }
